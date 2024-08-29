@@ -1,10 +1,14 @@
 import sys
+import os
+import pathlib
 from twisted.internet import reactor
 
 from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QMainWindow
 
 from PySide6.QtCore import QTimer, Qt
+from PySide6.QtPdf import QPdfDocument
+from PySide6.QtPdfWidgets import QPdfView
 
 from src.qtgui.MainWindow.UI.MainUI import Ui_MainWindow
 
@@ -15,6 +19,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.reactor = reactor
 
         self.setupUi(self)
+        
+        relative_path = 'test_paper.pdf'
+        abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
+        print(abs_path)
+
+        document = QPdfDocument(self)
+        
+        document.load(abs_path)
+        self.pdfView.setPageMode(QPdfView.PageMode.MultiPage)
+        self.pdfView.setDocument(document)
+        print(self.pdfView.document().pageCount())
     
     def closeEvent(self, event):
         self.reactor.callFromThread(self.reactor.stop)
@@ -31,6 +46,8 @@ def run_interface():
     app = QApplication([])
     app.setAttribute(Qt.AA_ShareOpenGLContexts)
     app.setAttribute(Qt.AA_EnableHighDpiScaling)
+
+    app.setStyle('Universal')
 
     if 'twisted.internet.reactor' in sys.modules:
         del sys.modules['twisted.internet.reactor']
