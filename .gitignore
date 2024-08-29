@@ -1,1 +1,4 @@
 *pycache
+*.pyc
+src/qtgui/*/UI/*.py
+__pycache__/

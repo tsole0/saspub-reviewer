@@ -1,12 +1,14 @@
 import os
+import sys
 import subprocess
 
-def convert_ui(root_directory):
+def convert_ui():
+    root_directory = os.path.dirname(os.path.abspath(sys.modules[__name__].__file__))
     for subdir, _, files in os.walk(root_directory):
         for filename in files:
             if filename.endswith(".ui"):
                 ui_path = os.path.join(subdir, filename)
-                py_filename = f"ui_{os.path.splitext(filename)[0]}.py"
+                py_filename = f"{os.path.splitext(filename)[0]}.py"
                 py_path = os.path.join(subdir, py_filename)
 
                 # Check if the .py file needs to be generated or updated
@@ -18,5 +20,4 @@ def convert_ui(root_directory):
                     print(f"No update needed for {py_path}")
 
 if __name__ == "__main__":
-    script_directory = os.path.dirname(os.path.abspath(__file__))
-    convert_ui(script_directory)
+    convert_ui()

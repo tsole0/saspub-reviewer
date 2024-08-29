@@ -1,2 +1,5 @@
 Pyside6
 Twisted
+
+# Alphabetized list of OS-specific packages
+pywin32; platform_system == "Windows"
