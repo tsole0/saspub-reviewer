@@ -3,7 +3,7 @@ import os
 import pathlib
 from twisted.internet import reactor
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QStyleFactory, QStyle
 from PySide6.QtWidgets import QMainWindow
 
 from PySide6.QtCore import QTimer, Qt
@@ -16,9 +16,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Main window of the application
     def __init__(self, reactor, parent=None):
         super(MainWindow, self).__init__(parent)
+        print(QStyleFactory.keys())
         self.reactor = reactor
 
         self.setupUi(self)
+
+        self.addSignals()
         
         relative_path = 'test_paper.pdf'
         abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
@@ -30,6 +33,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pdfView.setPageMode(QPdfView.PageMode.MultiPage)
         self.pdfView.setDocument(document)
         print(self.pdfView.document().pageCount())
+
+    def addSignals(self):
+        self.pdfView.documentChanged.connect(lambda: self.queueGroupBox.setFixedWidth(self.pdfView.width() / 3))
+    
+    def resizeEvent(self, event):
+        self.queueGroupBox.setFixedWidth(self.pdfView.width() / 3)
     
     def closeEvent(self, event):
         self.reactor.callFromThread(self.reactor.stop)
@@ -47,7 +56,7 @@ def run_interface():
     app.setAttribute(Qt.AA_ShareOpenGLContexts)
     app.setAttribute(Qt.AA_EnableHighDpiScaling)
 
-    app.setStyle('Universal')
+    app.setStyle(QStyleFactory.create('Fusion'))
 
     if 'twisted.internet.reactor' in sys.modules:
         del sys.modules['twisted.internet.reactor']
