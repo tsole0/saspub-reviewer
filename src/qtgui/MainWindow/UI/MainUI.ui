@@ -37,6 +37,26 @@
           </widget>
          </item>
          <item>
+          <widget class="QSpinBox" name="spinYear">
+           <property name="minimum">
+            <number>2005</number>
+           </property>
+           <property name="maximum">
+            <number>2024</number>
+           </property>
+           <property name="value">
+            <number>2024</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="cmdScrape">
+           <property name="text">
+            <string>Scrape</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -148,9 +168,15 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>639</width>
+                <width>738</width>
                 <height>395</height>
                </rect>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <attribute name="label">
                <string>Page 1</string>
@@ -161,9 +187,15 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>639</width>
+                <width>738</width>
                 <height>395</height>
                </rect>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <attribute name="label">
                <string>Page 2</string>
