@@ -7,7 +7,7 @@ from twisted.internet import reactor
 from PySide6.QtWidgets import QApplication, QStyleFactory, QStyle
 from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QVBoxLayout, QDialog
 
-from PySide6.QtCore import QTimer, Qt
+from PySide6.QtCore import QTimer, Qt, Signal
 from PySide6.QtPdf import QPdfDocument
 from PySide6.QtPdfWidgets import QPdfView
 
@@ -18,6 +18,9 @@ from src.qtgui.ProxyDialog.LoadProxy import LoadProxyDialog
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     # Main window of the application
+
+    scrapingStartSignal = Signal(Scraper, int)
+
     def __init__(self, reactor, parent=None):
         super(MainWindow, self).__init__(parent)
         self.reactor = reactor
@@ -46,6 +49,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pdfView.documentChanged.connect(lambda: self.queueGroupBox.setFixedWidth(self.pdfView.width() / 4))
         self.cmdScrape.clicked.connect(self.scrape)
         self.queueBox.currentChanged.connect(self.checkSetQueueDefault)
+        self.scrapingStartSignal.connect(self.scrapingStart)
+    
+    def scrapingStart(self, scraper: Scraper, amount_papers: int):
+        """
+        Update the progress bar with the number of papers scraped sucessfully as percent
+        :param scraper: Scraper object
+        :param amount_papers: Amount of papers to scrape
+        """
+        scraper.newPaperSignal.connect(lambda: self.progBar.setValue(self.progBar.value() + 1))
+        self.progBar.setMaximum(amount_papers)
+        self.progBar.setMinimum(0)
+        self.progBar.setValue(0)
+        scraper.searchYear(self.spinYear.value())
+
 
     def checkSetQueueDefault(self):
         """Add no papers in queue message if there are no papers to display"""
@@ -55,14 +72,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def scrape(self):
         self.scraper = Scraper() if self.scraper is None else self.scraper
-        proxyDialog = LoadProxyDialog(scraper=self.scraper)
-        if proxyDialog.exec_() == QDialog.Accepted:
-            amount_papers = proxyDialog.get_spinbox_value()
-        else:
-            return
-        print(f"{amount_papers} papers to scrape")
-        year = self.spinYear.value()
-        self.scraper.searchYear(year)
+        proxyDialog = LoadProxyDialog(scraper=self.scraper, parent=self)
+        proxyDialog.show()
     
     def setPaper(self, path):
         """Set paper displayed in pdfView"""

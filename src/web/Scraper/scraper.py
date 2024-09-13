@@ -1,3 +1,5 @@
+from signal import signal
+
 from scholarly import scholarly, ProxyGenerator
 
 from src.web.Scraper.paperManager import paperManager
@@ -6,6 +8,8 @@ class Scraper:
     """
     Scraper class for scraping Google Scholar
     """
+    newPaperSignal = signal()
+
     def __init__(self):
         self.paperManager = paperManager()
         self.proxy_generated = False
@@ -19,7 +23,9 @@ class Scraper:
             search_query = scholarly.search_pubs_custom_url(query)
             print(f"Searching for papers citing SasView in {year}")
             for article in search_query:
+                self.newPaperSignal.emit()
                 print(article)
+
         else:
             raise Exception("Proxy not generated. Dangerous to procede; Stopping.")
     
